@@ -19,8 +19,12 @@
                 <td><input type="text" id="upwd" onfocus="password()" onblur="password1()"><a id="passworda"></a></td>
             </tr>
             <tr>
+                <td align="right">密码</td>
+                <td><input type="text" id="cpwd" onfocus="cpassword()" onblur="cpassword1()"><a id="cpassworda"></a></td>
+            </tr>
+            <tr>
                 <td align="right">邮箱</td>
-                <td><input type="mail" id="email"></td>
+                <td><input type="mail" id="email" onfocus="cemail()" onblur="cemail1()"><a id="cemaila"></a></td>
             </tr>
             <tr>
                 <td align="right">手机</td>
@@ -51,6 +55,7 @@
     </div>
     <hr><br>
     <script>
+        var isReg=false;
         //uname 聚焦   ((uname.value).charCodeAt()>64&&(uname.value).charCodeAt()<90)
         function users(){
             usersa.innerHTML="账号应字母开头,长度6-12位";
@@ -59,16 +64,22 @@
         function users1(){
             if(uname.value==""){
                 usersa.innerHTML="账号不能为空";
+                isReg=false;
             }else if((uname.value).charCodeAt()<65){
                 usersa.innerHTML="账号应以大小字母开头";
+                isReg=false;
             }else if((uname.value).charCodeAt()>90&&(uname.value).charCodeAt()<97){
                 usersa.innerHTML="账号应以大小字母开头";
+                isReg=false;
             }else if((uname.value).charCodeAt()>122){
                 usersa.innerHTML="账号应以大小字母开头";
+                isReg=false;
             }else if((uname.value).length<6){
                 usersa.innerHTML="账号长度不能少于6位";
+                isReg=false;
             }else if((uname.value).length>12){
                 usersa.innerHTML="账号长度不能大于12位";
+                isReg=false;
             }else{
                 var xhr=new XMLHttpRequest();
                 xhr.onreadystatechange=function(){
@@ -76,8 +87,10 @@
                         var result=xhr.responseText;
                         if(result=="1"){
                             usersa.innerHTML="✔账号可以注册";
+                            isReg=true;
                         }else if(result=="0"){
                             usersa.innerHTML="×该账号已存在";
+                            isReg=false;
                         }
                     }
                 }
@@ -94,12 +107,30 @@
         function password1(){
             if(upwd.value==""){
                 passworda.innerHTML="密码不能为空";
+                isReg=false;
             }else if((upwd.value).length<6){
                 passworda.innerHTML="密码长度不能少于6位";
+                isReg=false;
             }else if((upwd.value).length>12){
                 passworda.innerHTML="密码长度不能大于12位";
+                isReg=false;
             }else{
                 passworda.innerHTML="✔密码格式正确";
+                isReg=true;
+            }
+        }
+        //cpwd 聚焦
+        function cpassword(){
+            cpassworda.innerHTML="密码长度规则6~12";
+        }
+        //cpwd 焦点移除
+        function cpassword1(){
+            if(upwd.value==cpwd.value){
+                cpassworda.innerHTML="输入一致";
+                isReg=true;
+            }else{
+                cpassworda.innerHTML="输入不一致，请确认";
+                isReg=false;
             }
         }
         //phone 聚焦
@@ -110,10 +141,27 @@
         function uphone1(){
             if(phone.value==""){
                 uphonea.innerHTML="手机号不能为空";
+                isReg=false;
             }else if((phone.value).length==11){
                 uphonea.innerHTML="✔手机号格式正确";
+                isReg=true;
             }else{
                 uphonea.innerHTML="×手机号格式不正确";
+                isReg=false;
+            }
+        }
+        //email 聚焦
+        function cemail(){
+            uemaila.innerHTML="请输入邮箱";
+        }
+        //email 焦点移除
+        function cemail1(){
+            if(email.value==""){
+                cemaila.innerHTML="邮箱不能为空";
+                isReg=false;
+            }else{
+                cemaila.innerHTML="✔";
+                isReg=true;
             }
         }
         //user_name 聚焦
@@ -124,16 +172,14 @@
         function zname1(){
             if(zsname.value==""){
                 znamea.innerHTML="真实姓名不能为空";
+                isReg=false;
             }else{
                 znamea.innerHTML="✔";
+                isReg=true;
             }
         }
         //注册提交 aa()
         function aa(){
-            if(usersa.innerHTML!=="✔账号可以注册"){
-                alert("账号不符合规则");
-                return;
-            }
             var obj={
                 $uname:uname.value,
                 $upwd:upwd.value,
@@ -156,7 +202,8 @@
                 if(xhr.readyState==4&&xhr.status==200){
                     var result=xhr.responseText;
                     if(result=="1"){
-                        zhucett.innerHTML=`注册成功&nbsp;&nbsp;<a href="pro_api_v1_login.html">去登录</a>`;
+                        alert("注册成功");
+                        location.href="http://127.0.0.1/pro_api_v1_userlist.html";
                     }else if(result=="0"){
                         zhucett.innerHTML=`注册失败`;
                     }
@@ -167,8 +214,11 @@
             var formdata=`uname=${uname.value}&upwd=${upwd.value}&email=${email.value}&phone=${phone.value}&avatar=${avatar.value}&user_name=${zsname.value}&gender=${gender.value}`;
             xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 
-
-            xhr.send(formdata);
+            if(isReg){
+              xhr.send(formdata);
+            }else{
+              alert("请完善您的资料");
+            }
 
         }
 
