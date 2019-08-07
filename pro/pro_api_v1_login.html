@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <input type="text" id="uname" placeholder="请输入账号"><br>
+    <input type="text" id="upwd" placeholder="请输入密码"><br>
+    <button onclick="aa()">登录</button>
+
+    <script>
+        function aa(){
+            if(uname.value==""){
+                alert("用户名不能为空");
+                return;
+            }
+            if(upwd.value==""){
+                alert("密码不能为空");
+                return;
+            }
+            var xhr=new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4&&xhr.status==200){
+                    var result=xhr.responseText;
+                    if(result=="1"){
+                        alert("登录成功");
+                    }else if(result=="0"){
+                        alert("登录失败");
+                    }
+                }
+            }
+            xhr.open("get",`/pro/api/v1/login/${uname.value}&${upwd.value}`,true);
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

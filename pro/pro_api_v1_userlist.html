@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body onload="bb()">
+    <div id="dd"></div>
+
+    <script>
+        function aa(x){
+            var xhr=new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4&&xhr.status==200){
+                    var result=xhr.responseText;
+                    if(result=="1"){
+                        alert("删除成功");
+                        bb();
+                    }else if(result=="0"){
+                        alert("删除失败或用户不存在");
+                    }
+                }
+            }
+            xhr.open("delete",`/pro/api/v1/deluser/${x}`,true);
+            xhr.send();
+        }
+        function bb(){
+            var xhr=new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4&&xhr.status==200){
+                    var result=xhr.responseText;                    
+                    var str=`<table border="1px" cellspacing="0">
+                                <tr>
+                                    <th>用户名</th>
+                                    <th>邮箱</th>
+                                    <th>手机</th>
+                                    <th>真实姓名</th>
+                                    <th>性别</th>
+                                    <th>操作</th>
+                                </tr>  `;
+                    var arr=JSON.parse(result);
+                    for(var i=0;i<arr.length;i++){
+                        str+=`
+                        <tr>
+                            <td>${ arr[i].uname }</td>
+                            <td>${ arr[i].email }</td>
+                            <td>${ arr[i].phone }</td>
+                            <td>${ arr[i].user_name }</td>
+                            <td>${ arr[i].gender==1?"男":(arr[i].gender==0?"女":"不详") }</td>
+                            <td><a href="javascript:aa(${arr[i].uid})">删除</a>&nbsp;<a href="pro_api_v1_searchuser.html?uid=${arr[i].uid}">修改</a></td>
+                        </tr>`;
+                    }
+                    str+=`</table>`;
+                    dd.innerHTML=str;    
+                }
+            }
+            xhr.open("get","/pro/api/v1/userlist",true);
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
+
+
+

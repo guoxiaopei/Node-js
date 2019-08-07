@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <p>要删除的用户ID：<input type="text" id="uid"><u id="uu"></u></p>
+    <button onclick="aa()">确认删除</button>
+    <br>
+    <script>
+        function aa(){
+            if(uid.value==""){
+                uu.innerHTML="请输入要删除的ID";
+                return;
+            }
+            var xhr=new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4&&xhr.status==200){
+                    var result=xhr.responseText;
+                    if(result=="1"){
+                        alert("删除成功");
+                    }else if(result=="0"){
+                        alert("删除失败或用户不存在");
+                    }
+                }
+            }
+            xhr.open("delete",`/pro/api/v1/deluser/${uid.value}`,true);
+            xhr.send();
+        }
+    </script>
+</body>
+</html>

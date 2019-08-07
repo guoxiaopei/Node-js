@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div>
+        <table align="center">
+            <caption>用户注册</caption>
+            <tr>
+                <td width="255px" align="right">账号</td>
+                <td width="400px"><input type="text" id="uname" onfocus="users()" onblur="users1()"><a id="usersa"></a></td>
+            </tr>
+            <tr>
+                <td align="right">密码</td>
+                <td><input type="text" id="upwd" onfocus="password()" onblur="password1()"><a id="passworda"></a></td>
+            </tr>
+            <tr>
+                <td align="right">邮箱</td>
+                <td><input type="mail" id="email"></td>
+            </tr>
+            <tr>
+                <td align="right">手机</td>
+                <td><input type="tel" id="phone" onfocus="uphone()" onblur="uphone1()"><a id="uphonea"></a></td>
+            </tr>
+            <tr>
+                <td align="right">头像</td>
+                <td><input type="file" id="avatar"></td>
+            </tr>
+            <tr>
+                <td align="right">姓名</td>
+                <td><input type="text" id="zsname" onfocus="zname()" onblur="zname1()"><a id="znamea"></a></td>
+            </tr>
+            <tr>
+                <td align="right">性别</td>
+                <td><select name="sex" id="gender">
+                    <option value="1">男</option>
+                    <option value="0">女</option>
+                </select></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><button onclick="aa()">注册</button></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><strong id="zhucett"></strong></td>
+            </tr>
+        </table>
+    </div>
+    <hr><br>
+    <script>
+        //uname 聚焦   ((uname.value).charCodeAt()>64&&(uname.value).charCodeAt()<90)
+        function users(){
+            usersa.innerHTML="账号应字母开头,长度6-12位";
+        }
+        //uname 焦点移除
+        function users1(){
+            if(uname.value==""){
+                usersa.innerHTML="账号不能为空";
+            }else if((uname.value).charCodeAt()<65){
+                usersa.innerHTML="账号应以大小字母开头";
+            }else if((uname.value).charCodeAt()>90&&(uname.value).charCodeAt()<97){
+                usersa.innerHTML="账号应以大小字母开头";
+            }else if((uname.value).charCodeAt()>122){
+                usersa.innerHTML="账号应以大小字母开头";
+            }else if((uname.value).length<6){
+                usersa.innerHTML="账号长度不能少于6位";
+            }else if((uname.value).length>12){
+                usersa.innerHTML="账号长度不能大于12位";
+            }else{
+                var xhr=new XMLHttpRequest();
+                xhr.onreadystatechange=function(){
+                    if(xhr.readyState==4&&xhr.status==200){
+                        var result=xhr.responseText;
+                        if(result=="1"){
+                            usersa.innerHTML="✔账号可以注册";
+                        }else if(result=="0"){
+                            usersa.innerHTML="×该账号已存在";
+                        }
+                    }
+                }
+                xhr.open("get",`/pro/api/v1/check/${uname.value}`,true);
+                xhr.send();
+            }
+
+        }
+        //upwd 聚焦
+        function password(){
+            passworda.innerHTML="密码长度规则6~12";
+        }
+        //upwd 焦点移除
+        function password1(){
+            if(upwd.value==""){
+                passworda.innerHTML="密码不能为空";
+            }else if((upwd.value).length<6){
+                passworda.innerHTML="密码长度不能少于6位";
+            }else if((upwd.value).length>12){
+                passworda.innerHTML="密码长度不能大于12位";
+            }else{
+                passworda.innerHTML="✔密码格式正确";
+            }
+        }
+        //phone 聚焦
+        function uphone(){
+            uphonea.innerHTML="请输入11位手机号码";
+        }
+        //phone 焦点移除
+        function uphone1(){
+            if(phone.value==""){
+                uphonea.innerHTML="手机号不能为空";
+            }else if((phone.value).length==11){
+                uphonea.innerHTML="✔手机号格式正确";
+            }else{
+                uphonea.innerHTML="×手机号格式不正确";
+            }
+        }
+        //user_name 聚焦
+        function zname(){
+            znamea.innerHTML="请输入真实姓名";
+        }
+        //user_name 焦点移除
+        function zname1(){
+            if(zsname.value==""){
+                znamea.innerHTML="真实姓名不能为空";
+            }else{
+                znamea.innerHTML="✔";
+            }
+        }
+        //注册提交 aa()
+        function aa(){
+            if(usersa.innerHTML!=="✔账号可以注册"){
+                alert("账号不符合规则");
+                return;
+            }
+            var obj={
+                $uname:uname.value,
+                $upwd:upwd.value,
+                $email:email.value,
+                $phone:phone.value,
+                $avatar:avatar.value,
+                $zsname:zsname.value,
+                $gender:gender.value
+            }
+            var i=0;
+            for(var key in obj){
+                i++;
+                if(obj[key]==""){
+                    alert(`请补充第${i}项资料`);
+                    return;
+                }
+            }
+            var xhr=new XMLHttpRequest();
+            xhr.onreadystatechange=function(){
+                if(xhr.readyState==4&&xhr.status==200){
+                    var result=xhr.responseText;
+                    if(result=="1"){
+                        zhucett.innerHTML=`注册成功&nbsp;&nbsp;<a href="pro_api_v1_login.html">去登录</a>`;
+                    }else if(result=="0"){
+                        zhucett.innerHTML=`注册失败`;
+                    }
+                }
+            }
+            xhr.open("post","/pro/api/v1/register",true);
+
+            var formdata=`uname=${uname.value}&upwd=${upwd.value}&email=${email.value}&phone=${phone.value}&avatar=${avatar.value}&user_name=${zsname.value}&gender=${gender.value}`;
+            xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+
+
+            xhr.send(formdata);
+
+        }
+
+
+
+    </script>
+
+
+</body>
+</html>
